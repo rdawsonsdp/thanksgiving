@@ -296,13 +296,21 @@ def filter_data(df, filters):
 def index():
     """Serve the frontend index page."""
     from flask import send_from_directory
-    return send_from_directory('public', 'index.html')
+    import os
+    public_dir = os.path.join(os.path.dirname(__file__), 'public')
+    return send_from_directory(public_dir, 'index.html')
 
 @app.route('/<path:path>')
 def serve_static(path):
-    """Serve static files from public directory."""
+    """Serve static files from public directory, excluding API routes."""
+    if path.startswith('api/'):
+        # Let API routes be handled by their specific routes
+        from flask import abort
+        abort(404)
     from flask import send_from_directory
-    return send_from_directory('public', path)
+    import os
+    public_dir = os.path.join(os.path.dirname(__file__), 'public')
+    return send_from_directory(public_dir, path)
 
 @app.route('/api/health', methods=['GET'])
 def health():
