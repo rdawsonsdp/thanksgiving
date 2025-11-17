@@ -1155,6 +1155,9 @@ def format_cell_value(value, col_name):
         return str_val
 
 
+# Export handler for Vercel
+handler = app
+
 # For local development
 if __name__ == '__main__':
     app.run(debug=True, port=5001, host='0.0.0.0')
