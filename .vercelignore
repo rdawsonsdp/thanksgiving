@@ -1,0 +1,11 @@
+*.pyc
+__pycache__/
+*.csv
+reports/
+*.json
+!long-canto-360620-6858c5a01c13.json
+!vercel.json
+.env
+.venv/
+venv/
+
