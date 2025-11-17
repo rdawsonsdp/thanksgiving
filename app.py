@@ -292,26 +292,6 @@ def filter_data(df, filters):
     return filtered_df
 
 
-@app.route('/', methods=['GET'])
-def index():
-    """Serve the frontend index page."""
-    from flask import send_from_directory
-    import os
-    public_dir = os.path.join(os.path.dirname(__file__), 'public')
-    return send_from_directory(public_dir, 'index.html')
-
-@app.route('/<path:path>')
-def serve_static(path):
-    """Serve static files from public directory, excluding API routes."""
-    if path.startswith('api/'):
-        # Let API routes be handled by their specific routes
-        from flask import abort
-        abort(404)
-    from flask import send_from_directory
-    import os
-    public_dir = os.path.join(os.path.dirname(__file__), 'public')
-    return send_from_directory(public_dir, path)
-
 @app.route('/api/health', methods=['GET'])
 def health():
     """Health check endpoint."""
@@ -1174,6 +1154,31 @@ def format_cell_value(value, col_name):
             return str_val[:47] + '...'
         return str_val
 
+
+# Serve static files and frontend (must be after all API routes)
+@app.route('/', methods=['GET'])
+def index():
+    """Serve the frontend index page."""
+    from flask import send_from_directory
+    import os
+    public_dir = os.path.join(os.path.dirname(__file__), 'public')
+    return send_from_directory(public_dir, 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    """Serve static files from public directory, excluding API routes."""
+    if path.startswith('api/'):
+        # Let API routes be handled by their specific routes
+        from flask import abort
+        abort(404)
+    from flask import send_from_directory
+    import os
+    public_dir = os.path.join(os.path.dirname(__file__), 'public')
+    try:
+        return send_from_directory(public_dir, path)
+    except:
+        # If file not found, serve index.html for SPA routing
+        return send_from_directory(public_dir, 'index.html')
 
 # Export handler for Vercel
 handler = app
