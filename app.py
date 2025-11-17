@@ -1168,26 +1168,40 @@ def format_cell_value(value, col_name):
 @app.route('/', methods=['GET'])
 def index():
     """Serve the frontend index page."""
-    from flask import send_from_directory
+    from flask import send_from_directory, send_file
     import os
     public_dir = os.path.join(os.path.dirname(__file__), 'public')
-    return send_from_directory(public_dir, 'index.html')
+    index_path = os.path.join(public_dir, 'index.html')
+    if os.path.exists(index_path):
+        return send_file(index_path)
+    else:
+        return "Frontend not found. Please ensure index.html exists in the public directory.", 404
 
 @app.route('/<path:path>')
 def serve_static(path):
     """Serve static files from public directory, excluding API routes."""
+    # Skip API routes - they're handled by specific route handlers above
     if path.startswith('api/'):
-        # Let API routes be handled by their specific routes
         from flask import abort
         abort(404)
-    from flask import send_from_directory
+    
+    from flask import send_from_directory, send_file
     import os
     public_dir = os.path.join(os.path.dirname(__file__), 'public')
-    try:
-        return send_from_directory(public_dir, path)
-    except:
-        # If file not found, serve index.html for SPA routing
-        return send_from_directory(public_dir, 'index.html')
+    
+    # Check if it's a file in public directory
+    file_path = os.path.join(public_dir, path)
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        return send_file(file_path)
+    
+    # If file not found, serve index.html for SPA routing
+    index_path = os.path.join(public_dir, 'index.html')
+    if os.path.exists(index_path):
+        return send_file(index_path)
+    
+    # If index.html doesn't exist, return 404
+    from flask import abort
+    abort(404)
 
 # Export handler for Vercel
 # Vercel expects the Flask app to be accessible as 'app' or 'handler'
