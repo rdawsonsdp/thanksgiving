@@ -44,7 +44,7 @@ def get_credentials():
         return Credentials.from_service_account_info(creds_json, scopes=SCOPES)
     
     # Fallback to file (for local development)
-    creds_path = os.path.join(os.path.dirname(__file__), "long-canto-360620-6858c5a01c13.json")
+    creds_path = os.path.join(os.path.dirname(__file__), "thanksgiving_google.json")
     return Credentials.from_service_account_file(creds_path, scopes=SCOPES)
 
 
