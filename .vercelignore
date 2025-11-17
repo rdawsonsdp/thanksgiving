@@ -17,7 +17,6 @@ Thumbs.db
 *.swp
 *.swo
 *~
-app.py
 sales_report.py
 run_local.sh
 DEPLOYMENT.md
