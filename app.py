@@ -1168,36 +1168,45 @@ def format_cell_value(value, col_name):
 @app.route('/', methods=['GET'])
 def index():
     """Serve the frontend index page."""
-    from flask import send_file, Response
+    from flask import Response
     import os
     
-    # Try multiple possible paths for the public directory
-    possible_paths = [
-        os.path.join(os.path.dirname(__file__), 'public', 'index.html'),
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), 'public', 'index.html'),
-        'public/index.html',
-        './public/index.html',
-    ]
+    # Get the directory where this file is located
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    public_dir = os.path.join(current_dir, 'public')
+    index_path = os.path.join(public_dir, 'index.html')
     
-    for index_path in possible_paths:
+    # Try to read the file
+    try:
         if os.path.exists(index_path):
-            try:
-                return send_file(index_path)
-            except Exception as e:
-                # If send_file fails, try reading and returning the content
-                try:
-                    with open(index_path, 'r', encoding='utf-8') as f:
+            with open(index_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+            return Response(content, mimetype='text/html; charset=utf-8')
+        else:
+            # Try alternative paths
+            alt_paths = [
+                os.path.join(os.getcwd(), 'public', 'index.html'),
+                'public/index.html',
+                './public/index.html',
+            ]
+            for alt_path in alt_paths:
+                if os.path.exists(alt_path):
+                    with open(alt_path, 'r', encoding='utf-8') as f:
                         content = f.read()
-                    return Response(content, mimetype='text/html')
-                except:
-                    continue
-    
-    # If all paths fail, return a helpful error message
-    return Response(
-        f"Frontend not found. Checked paths: {possible_paths}. Current dir: {os.getcwd()}, __file__: {__file__}",
-        status=404,
-        mimetype='text/plain'
-    )
+                    return Response(content, mimetype='text/html; charset=utf-8')
+            
+            # Return error with debug info
+            return Response(
+                f"index.html not found. Current dir: {os.getcwd()}, __file__: {__file__}, checked: {index_path}, {alt_paths}",
+                status=404,
+                mimetype='text/plain'
+            )
+    except Exception as e:
+        return Response(
+            f"Error reading index.html: {str(e)}. Current dir: {os.getcwd()}, __file__: {__file__}",
+            status=500,
+            mimetype='text/plain'
+        )
 
 @app.route('/<path:path>')
 def serve_static(path):
