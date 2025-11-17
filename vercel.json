@@ -16,6 +16,10 @@
       "dest": "index.py"
     },
     {
+      "src": "/(.*\\.(svg|png|jpg|jpeg|gif|ico|css|js|woff|woff2|ttf|eot))",
+      "dest": "/public/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "index.py"
     }
