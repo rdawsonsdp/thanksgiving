@@ -1,27 +1,19 @@
 {
   "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/index.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.py"
+    }
+  ],
   "builds": [
     {
       "src": "index.py",
       "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "index.py"
-    },
-    {
-      "src": "/",
-      "dest": "index.py"
-    },
-    {
-      "src": "/(.*\\.(svg|png|jpg|jpeg|gif|ico|css|js|woff|woff2|ttf|eot))",
-      "dest": "/public/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "index.py"
     }
   ],
   "functions": {
